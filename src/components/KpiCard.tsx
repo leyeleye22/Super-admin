@@ -1,41 +1,42 @@
 interface KpiCardProps {
-  label:    string;
-  value:    string | number;
-  sub?:     string;
-  accent?:  "rose" | "green" | "amber" | "red" | "blue" | "gray";
-  trend?:   "up" | "down" | "flat";
+  label:     string;
+  value:     string | number;
+  sub?:      string;
+  accent?:   "rose" | "green" | "amber" | "red" | "blue" | "gray";
+  trend?:    "up" | "down" | "flat";
   trendVal?: string;
-  icon:     React.ReactNode;
+  icon:      React.ReactNode;
   children?: React.ReactNode;
 }
 
-const ACCENTS: Record<string, { head: string; border: string; icon: string; dot: string }> = {
-  rose:  { head: "text-rose",     border: "border-l-rose",      icon: "bg-rose-100 text-rose",     dot: "bg-rose" },
-  green: { head: "text-success",  border: "border-l-success",   icon: "bg-success-bg text-success", dot: "bg-success" },
-  amber: { head: "text-warning",  border: "border-l-warning",   icon: "bg-warning-bg text-warning", dot: "bg-warning" },
-  red:   { head: "text-danger",   border: "border-l-danger",    icon: "bg-danger-bg text-danger",   dot: "bg-danger" },
-  blue:  { head: "text-info",     border: "border-l-info",      icon: "bg-info-bg text-info",       dot: "bg-info" },
-  gray:  { head: "text-muted",    border: "border-l-border-strong", icon: "bg-subtle text-muted",    dot: "bg-border-strong" },
+const ACCENTS: Record<string, { text: string; iconBg: string; iconText: string; trendBg: string }> = {
+  rose:  { text: "text-rose",      iconBg: "bg-rose-50",   iconText: "text-rose",      trendBg: "bg-rose-50 text-rose" },
+  green: { text: "text-rose-deep", iconBg: "bg-rose-100",  iconText: "text-rose-deep", trendBg: "bg-rose-100 text-rose-deep" },
+  amber: { text: "text-body",      iconBg: "bg-subtle",    iconText: "text-body",      trendBg: "bg-subtle text-body" },
+  red:   { text: "text-danger",    iconBg: "bg-danger-bg", iconText: "text-danger",    trendBg: "bg-danger-bg text-danger" },
+  blue:  { text: "text-body",      iconBg: "bg-subtle",    iconText: "text-muted",     trendBg: "bg-subtle text-muted" },
+  gray:  { text: "text-muted",     iconBg: "bg-subtle",    iconText: "text-muted",     trendBg: "bg-subtle text-muted" },
 };
 
 export default function KpiCard({ label, value, sub, accent = "gray", trend, trendVal, icon, children }: KpiCardProps) {
   const a = ACCENTS[accent] ?? ACCENTS.gray;
   return (
-    <div className={`card border-l-4 ${a.border} p-4 md:p-5 flex flex-col gap-3 hover:shadow-card-hover`}>
-      <div className="flex items-center justify-between">
-        <span className="kpi-label">{label}</span>
-        <div className={`w-7 h-7 rounded-lg flex items-center justify-center ${a.icon}`}>{icon}</div>
+    <div className="card p-5 flex flex-col gap-4 hover:shadow-card-hover group">
+      <div className="flex items-start justify-between">
+        <div className={`w-10 h-10 rounded-2xl flex items-center justify-center flex-shrink-0 ${a.iconBg} ${a.iconText} transition-transform group-hover:scale-110`}>
+          {icon}
+        </div>
+        {trendVal && (
+          <span className={`inline-flex items-center gap-1 text-[10px] font-black px-2 py-1 rounded-full ${a.trendBg}`}>
+            {trend === "up" ? "↑" : trend === "down" ? "↓" : "→"} {trendVal}
+          </span>
+        )}
       </div>
       <div>
         <p className="kpi-value">{value}</p>
-        {sub && <p className="text-xs text-muted mt-1">{sub}</p>}
+        <p className="kpi-label mt-2">{label}</p>
+        {sub && <p className="text-[11px] text-muted mt-1">{sub}</p>}
       </div>
-      {trendVal && (
-        <p className={`text-xs font-semibold ${a.head} flex items-center gap-1`}>
-          <span className={`w-1.5 h-1.5 rounded-full ${a.dot}`} />
-          {trend === "up" ? "↑" : trend === "down" ? "↓" : "→"} {trendVal}
-        </p>
-      )}
       {children}
     </div>
   );

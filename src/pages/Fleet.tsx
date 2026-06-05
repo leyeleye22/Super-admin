@@ -63,7 +63,8 @@ export default function Fleet() {
       ) : (
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
           {filtered.map(d => {
-            const isLive = liveIds.has(d.email);
+            const driverKey = d.email ?? d.id;
+            const isLive = liveIds.has(driverKey);
             return (
               <div key={d.id} className={`card p-4 flex flex-col gap-3 hover:shadow-card-hover transition-all ${isLive ? "ring-1 ring-success/20" : ""}`}>
                 <div className="flex items-center justify-between">
@@ -93,13 +94,13 @@ export default function Fleet() {
                 <div className="space-y-1.5 text-xs text-muted">
                   <div className="flex items-center gap-2">
                     <Mail className="w-3 h-3 flex-shrink-0" />
-                    <span className="truncate">{d.email}</span>
+                    <span className="truncate">{d.email ?? d.phone ?? d.id}</span>
                   </div>
                   {d.phone && <div className="flex items-center gap-2"><Phone className="w-3 h-3 flex-shrink-0" /><span>{d.phone}</span></div>}
                 </div>
 
                 <div className="text-2xs text-muted border-t border-border/50 pt-2">
-                  Joined {new Date(d.date_joined).toLocaleDateString()}
+                  Joined {new Date(d.date_joined ?? d.created_at).toLocaleDateString()}
                 </div>
               </div>
             );

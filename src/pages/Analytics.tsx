@@ -1,9 +1,8 @@
 import { useEffect, useState } from "react";
 import { BarChart, Bar, AreaChart, Area, XAxis, YAxis, Tooltip, ResponsiveContainer, Cell } from "recharts";
 import { Users, Search, Clock, TrendingUp, MapPin, Activity, BarChart3 } from "lucide-react";
-import { fetchHourlyHeatmap, fetchTopSearches, fetchTelemetry } from "../lib/stats";
+import { fetchHourlyHeatmap, fetchTopSearches, fetchTelemetry, fetchDashboard } from "../lib/stats";
 import { fetchTransitIntelligence } from "../lib/intelligence";
-import { api } from "../lib/api";
 import KpiCard from "../components/KpiCard";
 import SectionCard from "../components/SectionCard";
 
@@ -21,12 +20,20 @@ export default function Analytics() {
   useEffect(() => {
     Promise.allSettled([
       fetchHourlyHeatmap(), fetchTopSearches(), fetchTelemetry(14),
-      api.get("/api/analytics/summary/").then(r => r.data), fetchTransitIntelligence(),
-    ]).then(([h, s, t, sum, i]) => {
+      fetchDashboard(), fetchTransitIntelligence(),
+    ]).then(([h, s, t, d, i]) => {
       if (h.status === "fulfilled") setHourly(h.value);
       if (s.status === "fulfilled") setSearches(s.value);
       if (t.status === "fulfilled") setTelemetry(t.value);
-      if (sum.status === "fulfilled") setSummary(sum.value ?? []);
+      if (d.status === "fulfilled") {
+        const { analytics, fleet } = d.value;
+        setSummary([{
+          total_events:   fleet.pings_today ?? 0,
+          unique_devices: analytics.unique_devices ?? 0,
+          fare_searches:  analytics.fare_searches ?? 0,
+          peak_hour:      analytics.peak_hour ?? 12,
+        }]);
+      }
       if (i.status === "fulfilled") setIntel(i.value);
     }).finally(() => setLoading(false));
   }, []);

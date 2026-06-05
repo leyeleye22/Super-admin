@@ -1,135 +1,44 @@
-import { useState } from "react";
 import { NavLink, Outlet, useNavigate } from "react-router-dom";
-import {
-  LayoutDashboard, Bus, Map, BarChart3,
-  FileText, Settings, LogOut, Menu, X, ChevronLeft,
-  Zap, Radio,
-} from "lucide-react";
+import { BarChart3, Brain, BusFront, FileText, Layers3, LogOut, Map, Radio, Settings, ShieldCheck } from "lucide-react";
 import { logout } from "../lib/auth";
 
 const NAV = [
-  { to: "/",          label: "Overview",   icon: LayoutDashboard },
-  { to: "/transit",   label: "Transit",    icon: Radio },
-  { to: "/fleet",     label: "Fleet",      icon: Bus },
-  { to: "/network",   label: "Network",    icon: Map },
-  { to: "/analytics", label: "Analytics",  icon: BarChart3 },
-  { to: "/reports",   label: "Reports",    icon: FileText },
-  { to: "/settings",  label: "Settings",   icon: Settings },
+  { to: "/", label: "Ecosystem", icon: Brain },
+  { to: "/transit", label: "Live transit", icon: Radio },
+  { to: "/fleet", label: "Fleet", icon: BusFront },
+  { to: "/network", label: "Network", icon: Map },
+  { to: "/analytics", label: "Analytics", icon: BarChart3 },
+  { to: "/reports", label: "Reports", icon: FileText },
+  { to: "/settings", label: "Settings", icon: Settings },
 ];
-
-function NavItem({ to, label, icon: Icon, collapsed, onNav }: {
-  to: string; label: string; icon: React.ComponentType<{ className?: string }>;
-  collapsed: boolean; onNav: () => void;
-}) {
-  return (
-    <NavLink
-      to={to} end={to === "/"} onClick={onNav}
-      className={({ isActive }) => `
-        flex items-center gap-3 rounded-lg px-3 py-2 text-sm transition-all
-        ${collapsed ? "justify-center px-2" : ""}
-        ${isActive
-          ? "bg-rose-100 text-rose border border-rose-200 font-medium"
-          : "text-muted hover:text-ink hover:bg-subtle"}
-      `}
-    >
-      <Icon className="w-4 h-4 flex-shrink-0" />
-      {!collapsed && <span>{label}</span>}
-    </NavLink>
-  );
-}
 
 export default function Layout() {
   const nav = useNavigate();
-  const [collapsed, setCollapsed] = useState(false);
-  const [mobileOpen, setMobileOpen] = useState(false);
   const handleLogout = () => { logout(); nav("/login"); };
 
   return (
-    <div className="flex h-screen overflow-hidden bg-base">
-      {/* Sidebar */}
-      <aside className={`hidden md:flex flex-col h-full bg-surface border-r border-border transition-all duration-200 flex-shrink-0 ${collapsed ? "w-[60px]" : "w-56"}`}>
-        <div className={`flex items-center h-14 border-b border-border px-4 flex-shrink-0 ${collapsed ? "justify-center" : "gap-3"}`}>
-          <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-rose to-rose-light flex items-center justify-center flex-shrink-0 shadow-card-rose">
-            <Zap className="w-4 h-4 text-white" />
+    <div className="flex h-screen overflow-hidden bg-[#f7f7f8] text-[#121212]">
+      <aside className="hidden w-[260px] shrink-0 border-r border-black/10 bg-white p-4 md:flex md:flex-col">
+        <div className="rounded-[1.6rem] bg-[#121212] p-4 text-white">
+          <div className="flex items-center gap-3">
+            <span className="flex h-12 w-12 items-center justify-center rounded-2xl bg-[#ff4fa3]"><Layers3 className="h-6 w-6" /></span>
+            <div><p className="text-lg font-black leading-none">TrotroLive</p><p className="mt-1 text-[10px] font-black uppercase tracking-[0.22em] text-white/45">Super Admin</p></div>
           </div>
-          {!collapsed && (
-            <div className="min-w-0">
-              <p className="text-sm font-bold text-ink leading-tight">TrotroLive</p>
-              <p className="text-[10px] text-muted">Super Admin</p>
-            </div>
-          )}
+          <div className="mt-4 rounded-2xl bg-white/10 p-3 text-xs font-bold text-white/60">National mobility operating system</div>
         </div>
-
-        <nav className="flex-1 px-2 py-3 space-y-0.5 overflow-y-auto">
-          {NAV.map(item => <NavItem key={item.to} {...item} collapsed={collapsed} onNav={() => {}} />)}
+        <nav className="mt-5 flex-1 space-y-1 overflow-y-auto">
+          {NAV.map(({ to, label, icon: Icon }) => (
+            <NavLink key={to} to={to} end={to === "/"} className={({ isActive }) => `flex items-center gap-3 rounded-2xl px-4 py-3 text-sm font-black transition ${isActive ? "bg-[#ff4fa3] text-white shadow-lg shadow-pink-500/20" : "text-black/55 hover:bg-pink-50 hover:text-[#ff4fa3]"}`}>
+              <Icon className="h-5 w-5" /> {label}
+            </NavLink>
+          ))}
         </nav>
-
-        <div className="px-2 py-3 border-t border-border">
-          <button onClick={handleLogout}
-            className={`flex items-center gap-3 rounded-lg px-3 py-2 text-sm text-muted hover:text-danger hover:bg-danger-bg w-full transition-all ${collapsed ? "justify-center" : ""}`}>
-            <LogOut className="w-4 h-4" />
-            {!collapsed && <span>Sign out</span>}
-          </button>
+        <div className="rounded-[1.4rem] border border-black/10 bg-[#f5f5f7] p-3">
+          <div className="flex items-center gap-2 text-xs font-black text-black/60"><ShieldCheck className="h-4 w-4 text-[#00c853]" /> Staff access only</div>
+          <button onClick={handleLogout} className="mt-3 flex w-full items-center justify-center gap-2 rounded-xl bg-white px-3 py-2 text-xs font-black text-black/55 hover:text-[#ff4fa3]"><LogOut className="h-4 w-4" /> Sign out</button>
         </div>
-
-        <button onClick={() => setCollapsed(c => !c)}
-          className="absolute -right-3 top-14 w-6 h-6 rounded-full bg-surface border border-border flex items-center justify-center shadow-sm hover:bg-base transition-colors z-10">
-          <ChevronLeft className={`w-3 h-3 text-muted transition-transform ${collapsed ? "rotate-180" : ""}`} />
-        </button>
       </aside>
-
-      {/* Mobile overlay */}
-      {mobileOpen && (
-        <>
-          <div className="fixed inset-0 bg-black/20 z-40 md:hidden" onClick={() => setMobileOpen(false)} />
-          <aside className="fixed left-0 top-0 h-full w-64 z-50 md:hidden bg-surface border-r border-border shadow-xl">
-            <div className="flex items-center justify-between h-14 border-b border-border px-4">
-              <div className="flex items-center gap-3">
-                <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-rose to-rose-light flex items-center justify-center">
-                  <Zap className="w-4 h-4 text-white" />
-                </div>
-                <div>
-                  <p className="text-sm font-bold text-ink">TrotroLive</p>
-                  <p className="text-[10px] text-muted">Super Admin</p>
-                </div>
-              </div>
-              <button onClick={() => setMobileOpen(false)} className="text-muted hover:text-ink"><X className="w-5 h-5" /></button>
-            </div>
-            <nav className="px-2 py-3 space-y-0.5">
-              {NAV.map(item => <NavItem key={item.to} {...item} collapsed={false} onNav={() => setMobileOpen(false)} />)}
-            </nav>
-            <div className="px-2 py-3 border-t border-border absolute bottom-0 w-full">
-              <button onClick={handleLogout} className="flex items-center gap-3 rounded-lg px-3 py-2 text-sm text-muted hover:text-danger hover:bg-danger-bg w-full transition-all">
-                <LogOut className="w-4 h-4" /> Sign out
-              </button>
-            </div>
-          </aside>
-        </>
-      )}
-
-      {/* Main */}
-      <div className="flex-1 flex flex-col min-w-0 overflow-hidden">
-        <header className="flex items-center justify-between h-14 px-4 md:px-6 bg-surface border-b border-border flex-shrink-0">
-          <button onClick={() => setMobileOpen(true)} className="md:hidden text-muted hover:text-ink">
-            <Menu className="w-5 h-5" />
-          </button>
-
-          <div className="flex items-center gap-4 ml-auto">
-            <div className="flex items-center gap-2 px-3 py-1.5 rounded-lg bg-success-bg border border-success/20">
-              <span className="w-1.5 h-1.5 rounded-full bg-success animate-pulse-dot" />
-              <span className="text-xs font-medium text-success hidden sm:inline">System online</span>
-            </div>
-            <span className="text-xs text-muted">{new Date().toLocaleDateString("en-GH", { weekday: "short", day: "numeric", month: "short" })}</span>
-            <div className="w-8 h-8 rounded-full bg-gradient-to-br from-rose to-rose-light flex items-center justify-center shadow-sm">
-              <span className="text-xs font-bold text-white">SA</span>
-            </div>
-          </div>
-        </header>
-
-        <main className="flex-1 overflow-y-auto bg-base">
-          <Outlet />
-        </main>
-      </div>
+      <main className="flex-1 overflow-y-auto"><Outlet /></main>
     </div>
   );
 }

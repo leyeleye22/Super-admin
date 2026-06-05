@@ -66,61 +66,65 @@ export interface TelemetryDay {
 }
 
 export interface AdminDriver {
-  id:          number;
-  email:       string;
+  id:          string;
   first_name:  string;
   last_name:   string;
   phone:       string;
-  date_joined: string;
-  is_active:   boolean;
+  email?:      string;
+  status:      string;
+  is_online:   boolean;
+  is_active?:  boolean;
+  created_at:  string;
+  date_joined?: string;
 }
 
 export interface AdminStation {
   id:               string;
   name:             string;
   station_type:     string;
-  station_latitude: string;
-  station_longitude:string;
+  latitude:         string;
+  longitude:        string;
   busyness_score:   number;
   city:             string;
 }
 
 // ── API calls ─────────────────────────────────────────────────────────────────
 
-/** Single endpoint — all dashboard data (Super Admin). */
 export async function fetchDashboard(): Promise<DashboardData> {
-  const res = await api.get<DashboardData>("/api/admin/dashboard/");
+  const res = await api.get<DashboardData>("/api/v2/analytics/admin-dashboard/");
   return res.data;
 }
 
 export async function fetchDriversList(): Promise<AdminDriver[]> {
-  const res = await api.get<AdminDriver[]>("/api/admin/drivers/");
-  return res.data ?? [];
+  const res = await api.get<{ results?: AdminDriver[]; data?: AdminDriver[] } | AdminDriver[]>("/api/v2/fleet/drivers/");
+  const data = res.data as any;
+  return data?.results ?? data?.data ?? (Array.isArray(data) ? data : []);
 }
 
 export async function fetchStationsList(): Promise<AdminStation[]> {
-  const res = await api.get<AdminStation[]>("/api/admin/stations-list/");
-  return res.data ?? [];
+  const res = await api.get<{ results?: AdminStation[]; data?: AdminStation[] } | AdminStation[]>("/api/v2/infrastructure/stations/");
+  const data = res.data as any;
+  return data?.results ?? data?.data ?? (Array.isArray(data) ? data : []);
 }
 
 export async function fetchTelemetry(days = 7): Promise<TelemetryDay[]> {
-  const res = await api.get<{ daily: TelemetryDay[] }>(`/api/admin/telemetry/?days=${days}`);
-  return res.data?.daily ?? [];
+  const res = await api.get<{ data?: TelemetryDay[] } | TelemetryDay[]>(`/api/v2/analytics/metrics/?days=${days}`);
+  const data = res.data as any;
+  return data?.data ?? (Array.isArray(data) ? data : []);
 }
 
 export async function fetchHourlyHeatmap() {
-  const res = await api.get("/api/analytics/heatmap/");
+  const res = await api.get<{ data?: { hour_of_day: number; count: number }[] } | { hour_of_day: number; count: number }[]>("/api/v2/analytics/heatmap/hourly/");
+  const raw: { hour_of_day: number; count: number }[] = (res.data as any)?.data ?? (Array.isArray(res.data) ? res.data : []);
   const byHour: Record<number, number> = {};
-  for (const row of res.data ?? []) {
+  for (const row of raw) {
     byHour[row.hour_of_day] = (byHour[row.hour_of_day] ?? 0) + (row.count ?? 0);
   }
-  return Array.from({ length: 24 }, (_, h) => ({
-    hour:   h,
-    events: byHour[h] ?? 0,
-  }));
+  return Array.from({ length: 24 }, (_, h) => ({ hour: h, events: byHour[h] ?? 0 }));
 }
 
 export async function fetchTopSearches() {
-  const res = await api.get("/api/analytics/searches/?limit=10");
-  return res.data ?? [];
+  const res = await api.get("/api/v2/analytics/searches/top/?limit=10");
+  const data = res.data as any;
+  return data?.data ?? (Array.isArray(data) ? data : []);
 }

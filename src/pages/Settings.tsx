@@ -29,7 +29,7 @@ export default function Settings() {
   const checkApi = async () => {
     setChecking(true);
     try {
-      const [h, v] = await Promise.allSettled([api.get("/health/"), api.get("/api/admin/dashboard/")]);
+      const [h, v] = await Promise.allSettled([api.get("/health/"), api.get("/api/v2/analytics/admin-dashboard/")]);
       setApiOk(h.status === "fulfilled");
       if (h.status === "fulfilled") setHealth(h.value.data);
       if (v.status === "fulfilled") setVersion("Connected · Django REST");
@@ -65,7 +65,7 @@ export default function Settings() {
         <SettingRow label="API Status" value={apiOk === null ? "Checking…" : apiOk ? "Healthy" : "Error — check if Django is running"} />
         <SettingRow label="API Version" value={version} />
         <SettingRow label="Auth endpoint" value={`${API_BASE}/accounts/api/auth/backoffice-login/`} />
-        <SettingRow label="Admin endpoint" value={`${API_BASE}/api/admin/dashboard/`} />
+        <SettingRow label="Admin endpoint" value={`${API_BASE}/api/v2/analytics/admin-dashboard/`} />
       </SectionCard>
 
       <SectionCard title="Authentication" icon={<Key className="w-4 h-4" />}>
@@ -81,13 +81,9 @@ export default function Settings() {
       </SectionCard>
 
       <SectionCard title="Super Admin Account" icon={<User className="w-4 h-4" />}>
-        <SettingRow label="Default email" value="superadmin@trotrolive.com" />
-        <SettingRow label="Default password" value="TrotroLive2026!" />
-        <SettingRow label="User ID" value="49" />
         <SettingRow label="Permissions" value="is_staff=True · is_superuser=True · is_active=True" />
         <div className="py-3 text-xs text-muted">
-          To recreate the admin account, run:<br />
-          <code className="bg-subtle px-2 py-1 rounded font-mono text-muted mt-1 inline-block text-2xs">python manage.py seed_superadmin</code>
+          Admin account created via Django <code className="bg-subtle px-2 py-1 rounded font-mono text-muted inline-block text-2xs">createsuperuser</code>
         </div>
       </SectionCard>
 

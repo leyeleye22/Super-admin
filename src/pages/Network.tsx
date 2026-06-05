@@ -63,7 +63,7 @@ export default function Network() {
           </div>
           <div className="overflow-x-auto max-h-[600px] overflow-y-auto">
             <table className="w-full text-xs min-w-[500px]">
-              <thead className="sticky top-0 bg-subtle/80 backdrop-blur-sm">
+              <thead className="sticky top-0 bg-subtle">
                 <tr className="border-b border-border text-muted">
                   <th className="px-4 py-2.5 text-left table-head">Station</th>
                   <th className="px-4 py-2.5 text-left table-head">Type</th>

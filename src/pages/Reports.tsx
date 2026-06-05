@@ -65,7 +65,7 @@ export default function Reports() {
         action={<button onClick={() => downloadCSV("fleet_report_30d.csv", telemetry)} className="btn-rose-subtle"><Download className="w-3 h-3" /> Export CSV</button>}>
         <div className="overflow-x-auto -mx-5 -mb-5">
           <table className="w-full text-xs min-w-[500px]">
-            <thead className="sticky top-0 bg-subtle/80 backdrop-blur-sm">
+            <thead className="sticky top-0 bg-subtle">
               <tr className="border-b border-border text-muted">
                 {["Date","Distance km","Active drivers","Avg speed","Stops"].map(h => (<th key={h} className="px-5 py-2.5 text-left table-head">{h}</th>))}
               </tr>
@@ -90,7 +90,7 @@ export default function Reports() {
         action={<button onClick={() => downloadCSV("passenger_report_30d.csv", summary)} className="btn-rose-subtle"><Download className="w-3 h-3" /> Export CSV</button>}>
         <div className="overflow-x-auto -mx-5 -mb-5">
           <table className="w-full text-xs min-w-[700px]">
-            <thead className="sticky top-0 bg-subtle/80 backdrop-blur-sm">
+            <thead className="sticky top-0 bg-subtle">
               <tr className="border-b border-border text-muted">
                 {["Date","Devices","Fare searches","Journeys","AI queries","Peak hour","Top city"].map(h => (<th key={h} className="px-5 py-2.5 text-left table-head">{h}</th>))}
               </tr>

@@ -219,7 +219,7 @@ export default function Transit() {
                   </div>
                   <div className="text-right flex-shrink-0">
                     <p className="text-sm font-bold text-rose">{c.avg_minutes ?? "—"} min</p>
-                    <span className={`text-2xs ${c.confidence >= 60 ? "text-success" : "text-warning"}`}>{c.confidence}% conf.</span>
+                    <span className={`text-2xs ${c.confidence >= 60 ? "text-rose" : "text-muted"}`}>{c.confidence}% conf.</span>
                   </div>
                 </div>
               ))}

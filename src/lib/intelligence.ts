@@ -85,11 +85,12 @@ export interface HourlyPing {
 }
 
 export async function fetchTransitIntelligence(): Promise<TransitIntelligence> {
-  const res = await api.get<TransitIntelligence>("/api/admin/transit-intelligence/");
-  return res.data;
+  const res = await api.get<TransitIntelligence | { data: TransitIntelligence }>("/api/v2/analytics/intelligence/");
+  const payload = res.data as any;
+  return payload?.data ?? payload;
 }
 
 export async function fetchTravelTimeDetail(fromId: string, toId: string, days = 30) {
-  const res = await api.get(`/api/admin/travel-times/?from=${fromId}&to=${toId}&days=${days}`);
-  return res.data;
+  const res = await api.get(`/api/v2/analytics/routes/?route_id=${fromId}&to_id=${toId}&days=${days}`);
+  return (res.data as any)?.data ?? res.data;
 }
