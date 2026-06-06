@@ -1,7 +1,6 @@
 import { useEffect, useState } from "react";
 import { Download, TrendingUp, Bus, Users, MapPin, FileText } from "lucide-react";
 import { fetchTelemetry, fetchDashboard, type DashboardData } from "../lib/stats";
-import { api } from "../lib/api";
 import KpiCard from "../components/KpiCard";
 import SectionCard from "../components/SectionCard";
 
@@ -23,10 +22,22 @@ export default function Reports() {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    Promise.allSettled([fetchTelemetry(30), api.get("/api/analytics/summary/").then(r => r.data), fetchDashboard()])
-      .then(([t, s, d]) => {
-        if (t.status === "fulfilled") setTelemetry(t.value);
-        if (s.status === "fulfilled") setSummary(s.value ?? []);
+    Promise.allSettled([fetchTelemetry(30), fetchDashboard()])
+      .then(([t, d]) => {
+        if (t.status === "fulfilled") {
+          const rows: any[] = t.value;
+          setTelemetry(rows);
+          // Derive passenger summary from mobility metrics (best available proxy)
+          setSummary(rows.map((r: any) => ({
+            date:           r.service_date ?? r.date ?? "—",
+            unique_devices: r.drivers      ?? r.active_drivers ?? 0,
+            fare_searches:  r.fare_searches ?? r.total_searches ?? 0,
+            journeys_started: r.total_trips ?? r.completed_trips ?? 0,
+            ai_queries:     0,
+            peak_hour:      r.peak_hour ?? null,
+            top_city:       r.city_name ?? "",
+          })));
+        }
         if (d.status === "fulfilled") setDash(d.value);
       }).finally(() => setLoading(false));
   }, []);

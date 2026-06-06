@@ -89,10 +89,9 @@ export default function Settings() {
 
       <SectionCard title="System Information" icon={<Database className="w-4 h-4" />}>
         <SettingRow label="Frontend" value="React 19 + Vite 8 + TypeScript" />
-        <SettingRow label="UI" value="Tailwind CSS v3 + Recharts + React-Leaflet" />
+        <SettingRow label="UI" value="Tailwind CSS v3 + Recharts" />
         <SettingRow label="Backend" value="Django 5.0 + DRF 3.15 + PostgreSQL + PostGIS" />
         <SettingRow label="Async tasks" value="Celery + Redis — analytics nightly" />
-        <SettingRow label="Maps" value="CartoDB Positron (no API key)" />
         <SettingRow label="Architecture" value="N-tier: Client → API → Business → Data" />
         <div className="py-3">
           <a href={`${API_BASE}/dashboard/`} target="_blank" rel="noreferrer" className="btn-rose-subtle inline-flex">
